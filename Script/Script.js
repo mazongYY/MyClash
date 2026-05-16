@@ -336,8 +336,17 @@ function main(config) {
 
   // 获取节点列表
   const proxies = config.proxies || [];
-  if (!proxies.length) {
-    throw new Error('配置文件中未找到任何节点');
+
+  // 验证节点列表是否存在代理节点
+  const allDirectOrReject = proxies.every((p) => {
+    const type = p.type?.toLowerCase();
+    return type === 'direct' || type === 'reject';
+  });
+
+  if (!proxies.length || allDirectOrReject) {
+    throw new Error(
+      '配置文件中未找到任何代理节点，请使用机场提供的配置文件进行覆写',
+    );
   }
 
   // --- 构建地区组和倍率组 ---
