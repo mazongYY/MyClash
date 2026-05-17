@@ -2,14 +2,16 @@
 
 Mihomo（Clash Meta）配置覆写脚本，无DNS泄露（图一乐），内置多项分流策略、地区策略，实现全局排除节点、自动识别节点倍率等功能
 
-该仓库同样提供了yaml配置文件，效果和脚本基本一致，有需要的可查看：[mihomoConfig.yaml](https://github.com/AIsouler/MyClash/blob/main/Config/mihomoConfig.yaml)
+该仓库同样提供了yaml配置文件，效果和脚本基本一致，有需要的可查看：[mihomoConfig.yaml](/Config/mihomoConfig.yaml)
 
 > [!IMPORTANT]
 > **注意⚠️：该脚本仅适用于覆写机场提供的配置文件，请勿用于覆写自己编写的配置文件**
 
 ## 使用方式
 
-复制以下脚本链接后按如图所示步骤导入到客户端，以 [Bettbox](https://github.com/appshubcc/Bettbox) 为例
+### 通过链接导入
+
+复制以下脚本链接后按如图所示步骤导入到代理客户端，以 [Bettbox](https://github.com/appshubcc/Bettbox) 为例
 
 ```txt
 https://raw.githubusercontent.com/AIsouler/MyClash/refs/heads/main/Script/mihomoScript.js
@@ -18,6 +20,12 @@ https://raw.githubusercontent.com/AIsouler/MyClash/refs/heads/main/Script/mihomo
 |                                                                                   |
 | --------------------------------------------------------------------------------- |
 | ![img](https://raw.githubusercontent.com/AIsouler/MyClash/main/Image/import.webp) |
+
+### 通过复制代码导入
+
+部分代理客户端不支持链接导入，可以点击以下链接后复制脚本完整代码再导入到代理客户端
+
+点击此链接即可查看脚本代码 ---> [mihomoScript.js](/Script/mihomoScript.js)
 
 ## 脚本说明
 
