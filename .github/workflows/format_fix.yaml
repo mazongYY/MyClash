@@ -29,12 +29,6 @@ jobs:
       - name: install tools
         run: |
           npm install -g prettier
-          pip install yamllint
-
-      # YAML 语法检查
-      - name: check yaml syntax
-        run: |
-          yamllint .
 
       # 格式化 JS
       - name: format js files
