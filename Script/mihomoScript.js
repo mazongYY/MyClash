@@ -513,6 +513,7 @@ const serviceConfigs = [
   {
     key: 'emby',
     name: 'Emby',
+    proxyMode: 'direct',
     providers: {
       emby: {
         ...ruleProviderCommonDomain,

@@ -573,7 +573,7 @@ proxy-groups:
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Instagram.png'
 
   - name: 'Emby'
-    <<: [*group_common_select, *proxies_default]
+    <<: [*group_common_select, *proxies_direct]
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Emby.png'
 
   - name: 'Spotify'
