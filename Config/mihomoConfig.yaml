@@ -136,12 +136,6 @@ rule_providers_common:
     &rule_providers_domain { type: http, interval: 86400, behavior: domain }
   rule_providers_ip:
     &rule_providers_ip { type: http, interval: 86400, behavior: ipcidr }
-  rule_providers_classical:
-    &rule_providers_classical {
-      type: http,
-      interval: 86400,
-      behavior: classical,
-    }
 
 # 定义 Rule Providers
 rule-providers:
@@ -150,16 +144,13 @@ rule-providers:
     format: mrs
     url: 'https://fastly.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockmihomolite.mrs'
     path: './ruleset/adblockmihomolite.mrs'
-  DownloadApps:
-    <<: *rule_providers_classical
-    format: text
-    url: 'https://fastly.jsdelivr.net/gh/AIsouler/MyClash@main/Rules/DownloadApps.txt'
-    path: './ruleset/DownloadApps.txt'
+    path-in-bundle: 'geo/geosite/category-ads-all.mrs'
   fakeip_filter:
     <<: *rule_providers_domain
     format: mrs
     url: 'https://fastly.jsdelivr.net/gh/wwqgtxx/clash-rules@release/fakeip-filter.mrs'
     path: './ruleset/fakeip-filter.mrs'
+    path-in-bundle: 'geo/geosite/fakeip-filter.mrs'
   private:
     <<: *rule_providers_domain
     format: mrs
@@ -279,11 +270,13 @@ rule-providers:
     format: mrs
     url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs'
     path: './ruleset/cn-additional-list.mrs'
+    path-in-bundle: 'geo/geosite/cn.mrs'
   cn:
     <<: *rule_providers_domain
     format: mrs
     url: 'https://fastly.jsdelivr.net/gh/wwqgtxx/clash-rules@release/direct.mrs'
     path: './ruleset/cn.mrs'
+    path-in-bundle: 'geo/geosite/cn.mrs'
   cn_ip:
     <<: *rule_providers_ip
     format: mrs
@@ -295,11 +288,7 @@ rule-providers:
     format: mrs
     url: 'https://fastly.jsdelivr.net/gh/666OS/rules@release/mihomo/domain/Emby.mrs'
     path: './ruleset/emby.mrs'
-  emby_ip:
-    <<: *rule_providers_ip
-    format: mrs
-    url: 'https://fastly.jsdelivr.net/gh/666OS/rules@release/mihomo/ip/Emby.mrs'
-    path: './ruleset/emby_ip.mrs'
+    path-in-bundle: 'geo/geosite/category-emby.mrs'
   spotify:
     <<: *rule_providers_domain
     format: mrs
@@ -686,9 +675,9 @@ rules:
   - RULE-SET,cloudflare_cn,直连
   - RULE-SET,apple_cn,直连
   - DOMAIN,fsend.cn,直连
+  - DOMAIN,international-gfe.download.nvidia.com,直连
 
   # 进程规则
-  - RULE-SET,DownloadApps,直连 # 常见磁力下载软件
   - PROCESS-NAME,com.perol.pixez,Pixiv
   - PROCESS-NAME,com.perol.play.pixez,Pixiv
 
@@ -723,7 +712,6 @@ rules:
   - RULE-SET,telegram_ip,Telegram,no-resolve
   - RULE-SET,twitter_ip,Twitter,no-resolve
   - RULE-SET,cloudflare_ip,Cloudflare,no-resolve
-  - RULE-SET,emby_ip,Emby,no-resolve
   - RULE-SET,netflix_ip,Netflix,no-resolve
 
   # 兜底规则

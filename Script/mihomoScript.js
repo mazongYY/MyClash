@@ -68,9 +68,6 @@ const rules = [
   'RULE-SET,private,直连',
   'RULE-SET,private_ip,直连,no-resolve',
 
-  // 进程规则
-  'RULE-SET,DownloadApps,直连', // 常见磁力下载软件
-
   // 国内直连
   'RULE-SET,games_cn,直连',
   'RULE-SET,epicgames,直连',
@@ -78,6 +75,7 @@ const rules = [
   'RULE-SET,cloudflare_cn,直连',
   'RULE-SET,apple_cn,直连',
   'DOMAIN,fsend.cn,直连',
+  'DOMAIN,international-gfe.download.nvidia.com,直连',
 ];
 
 // 定义地区策略组
@@ -121,8 +119,6 @@ const regionDefinitions = [
 ];
 
 // Rule Providers 通用配置
-const ruleProviderFormatYaml = { format: 'yaml' };
-const ruleProviderFormatText = { format: 'text' };
 const ruleProviderFormatMrs = { format: 'mrs' };
 
 const ruleProviderCommonDomain = {
@@ -135,25 +131,15 @@ const ruleProviderCommonIpcidr = {
   interval: 86400,
   behavior: 'ipcidr',
 };
-const ruleProviderCommonClassical = {
-  type: 'http',
-  interval: 86400,
-  behavior: 'classical',
-};
 
 // 定义基础 Rule Providers
 const baseRuleProviders = {
-  DownloadApps: {
-    ...ruleProviderCommonClassical,
-    ...ruleProviderFormatText,
-    url: 'https://fastly.jsdelivr.net/gh/AIsouler/MyClash@main/Rules/DownloadApps.txt',
-    path: './ruleset/DownloadApps.txt',
-  },
   fakeip_filter: {
     ...ruleProviderCommonDomain,
     ...ruleProviderFormatMrs,
     url: 'https://fastly.jsdelivr.net/gh/wwqgtxx/clash-rules@release/fakeip-filter.mrs',
     path: './ruleset/fakeip-filter.mrs',
+    'path-in-bundle': 'geo/geosite/fakeip-filter.mrs',
   },
   epicgames: {
     ...ruleProviderCommonDomain,
@@ -202,12 +188,14 @@ const baseRuleProviders = {
     ...ruleProviderFormatMrs,
     url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs',
     path: './ruleset/cn-additional-list.mrs',
+    'path-in-bundle': 'geo/geosite/cn.mrs',
   },
   cn: {
     ...ruleProviderCommonDomain,
     ...ruleProviderFormatMrs,
     url: 'https://fastly.jsdelivr.net/gh/wwqgtxx/clash-rules@release/direct.mrs',
     path: './ruleset/cn.mrs',
+    'path-in-bundle': 'geo/geosite/cn.mrs',
   },
   cn_ip: {
     ...ruleProviderCommonIpcidr,
@@ -522,20 +510,11 @@ const serviceConfigs = [
         ...ruleProviderFormatMrs,
         url: 'https://fastly.jsdelivr.net/gh/666OS/rules@release/mihomo/domain/Emby.mrs',
         path: './ruleset/emby.mrs',
-      },
-      emby_ip: {
-        ...ruleProviderCommonIpcidr,
-        ...ruleProviderFormatMrs,
-        url: 'https://fastly.jsdelivr.net/gh/666OS/rules@release/mihomo/ip/Emby.mrs',
-        path: './ruleset/emby_ip.mrs',
+        'path-in-bundle': 'geo/geosite/category-emby.mrs',
       },
     },
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Emby.png',
-    rules: [
-      'RULE-SET,emby,Emby',
-      'RULE-SET,emby_ip,Emby,no-resolve',
-      'DOMAIN-KEYWORD,emby,Emby',
-    ],
+    rules: ['RULE-SET,emby,Emby', 'DOMAIN-KEYWORD,emby,Emby'],
   },
   {
     key: 'spotify',
@@ -603,6 +582,7 @@ const serviceConfigs = [
         ...ruleProviderFormatMrs,
         url: 'https://fastly.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockmihomolite.mrs',
         path: './ruleset/adblockmihomolite.mrs',
+        'path-in-bundle': 'geo/geosite/category-ads-all.mrs',
       },
     },
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Advertising.png',
