@@ -23,6 +23,7 @@ const rules = [
   'RULE-SET,games_cn,直连',
   'RULE-SET,epicgames,直连',
   'RULE-SET,apple_cn,直连',
+  'RULE-SET,microsoft_cn,直连',
   'DOMAIN,fsend.cn,直连',
   'DOMAIN,international-gfe.download.nvidia.com,直连',
 ];
@@ -123,6 +124,13 @@ const baseRuleProviders = {
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple@cn.mrs',
     path: './ruleset/apple@cn.mrs',
     'path-in-bundle': 'geo/geosite/apple@cn.mrs',
+  },
+  microsoft_cn: {
+    ...ruleProviderCommonDomain,
+    ...ruleProviderFormatMrs,
+    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft@cn.mrs',
+    path: './ruleset/microsoft@cn.mrs',
+    'path-in-bundle': 'geo/geosite/microsoft@cn.mrs',
   },
   'geolocation-!cn': {
     ...ruleProviderCommonDomain,
