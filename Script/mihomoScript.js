@@ -22,9 +22,8 @@ const ruleOptionsEnable = {
   Microsoft: true, // Microsoft服务
   Apple: true, // Apple服务
   Telegram: true, // Telegram通讯软件
-  Cloudflare: true, // Cloudflare服务
-  Pixiv: true, // Pixiv绘画网站
   Steam: true, // Steam游戏平台
+  TikTok: true, // TikTok视频平台
   Twitter: true, // Twitter社交平台
   Emby: true, // Emby媒体服务
   Spotify: true, // Spotify音乐服务
@@ -56,7 +55,6 @@ const rules = [
   'RULE-SET,games_cn,直连', // 已包含 steam 下载域名
   'RULE-SET,epicgames,直连',
   'RULE-SET,nvidia_cn,直连',
-  'RULE-SET,cloudflare_cn,直连',
   'RULE-SET,apple_cn,直连',
   'RULE-SET,microsoft_cn,直连',
   'DOMAIN,fsend.cn,直连',
@@ -179,12 +177,6 @@ const baseRuleProviders = {
     path: './ruleset/cn_ip.mrs',
     'path-in-bundle': 'geo/geoip/cn.mrs',
   },
-  cloudflare_cn: {
-    ...ruleProviderCommonDomain,
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cloudflare@cn.mrs',
-    path: './ruleset/cloudflare@cn.mrs',
-    'path-in-bundle': 'geo/geosite/cloudflare@cn.mrs',
-  },
   apple_cn: {
     ...ruleProviderCommonDomain,
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple@cn.mrs',
@@ -260,12 +252,6 @@ const serviceConfigs = [
         path: './ruleset/youtube.mrs',
         'path-in-bundle': 'geo/geosite/youtube.mrs',
       },
-      tiktok: {
-        ...ruleProviderCommonDomain,
-        url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs',
-        path: './ruleset/tiktok.mrs',
-        'path-in-bundle': 'geo/geosite/tiktok.mrs',
-      },
       instagram: {
         ...ruleProviderCommonDomain,
         url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/instagram.mrs',
@@ -324,7 +310,6 @@ const serviceConfigs = [
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/ForeignMedia.png',
     rules: [
       'RULE-SET,youtube,Media',
-      'RULE-SET,tiktok,Media',
       'RULE-SET,instagram,Media',
       'RULE-SET,netflix,Media',
       'RULE-SET,netflix_ip,Media,no-resolve',
@@ -431,42 +416,6 @@ const serviceConfigs = [
     rules: ['RULE-SET,telegram,Telegram', 'RULE-SET,telegram_ip,Telegram,no-resolve'],
   },
   {
-    name: 'Cloudflare',
-    providers: {
-      cloudflare: {
-        ...ruleProviderCommonDomain,
-        url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cloudflare.mrs',
-        path: './ruleset/cloudflare.mrs',
-        'path-in-bundle': 'geo/geosite/cloudflare.mrs',
-      },
-      cloudflare_ip: {
-        ...ruleProviderCommonIpcidr,
-        url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cloudflare.mrs',
-        path: './ruleset/cloudflare_ip.mrs',
-        'path-in-bundle': 'geo/geoip/cloudflare.mrs',
-      },
-    },
-    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png',
-    rules: ['RULE-SET,cloudflare,Cloudflare', 'RULE-SET,cloudflare_ip,Cloudflare,no-resolve'],
-  },
-  {
-    name: 'Pixiv',
-    providers: {
-      pixiv: {
-        ...ruleProviderCommonDomain,
-        url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/pixiv.mrs',
-        path: './ruleset/pixiv.mrs',
-        'path-in-bundle': 'geo/geosite/pixiv.mrs',
-      },
-    },
-    icon: 'https://play-lh.googleusercontent.com/Ls9opXo6-wfEWmbBU8heJaFS8HwWydssWE1J3vexIGvkF-UJDqcW7ZMD8w6dQABfygONd4z3Yt4TfRDZAPYq=w480-h960-rw',
-    rules: [
-      'RULE-SET,pixiv,Pixiv',
-      'PROCESS-NAME,com.perol.pixez,Pixiv', // Pixez
-      'PROCESS-NAME,com.perol.play.pixez,Pixiv', // Pixez Google Play 版
-    ],
-  },
-  {
     name: 'Steam',
     direct: true,
     providers: {
@@ -479,6 +428,20 @@ const serviceConfigs = [
     },
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Steam.png',
     rules: ['RULE-SET,steam,Steam'],
+  },
+  {
+    name: 'TikTok',
+    defaultSelected: '日本',
+    providers: {
+      tiktok: {
+        ...ruleProviderCommonDomain,
+        url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs',
+        path: './ruleset/tiktok.mrs',
+        'path-in-bundle': 'geo/geosite/tiktok.mrs',
+      },
+    },
+    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png',
+    rules: ['RULE-SET,tiktok,TikTok'],
   },
   {
     name: 'Twitter',
@@ -562,7 +525,7 @@ function createRegionGroup(name, icon, proxies) {
       ...selectBaseOption,
       name,
       icon,
-      proxies: [...proxies, urlTestName, loadBalanceName],
+      proxies: [urlTestName, loadBalanceName, ...proxies],
     },
   ];
 }

@@ -196,11 +196,6 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/youtube.mrs'
     path: './ruleset/youtube.mrs'
     path-in-bundle: 'geo/geosite/youtube.mrs'
-  tiktok:
-    <<: *rule_providers_domain
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs'
-    path: './ruleset/tiktok.mrs'
-    path-in-bundle: 'geo/geosite/tiktok.mrs'
   instagram:
     <<: *rule_providers_domain
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/instagram.mrs'
@@ -286,16 +281,16 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs'
     path: './ruleset/telegram_ip.mrs'
     path-in-bundle: 'geo/geoip/telegram.mrs'
-  pixiv:
-    <<: *rule_providers_domain
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/pixiv.mrs'
-    path: './ruleset/pixiv.mrs'
-    path-in-bundle: 'geo/geosite/pixiv.mrs'
   steam:
     <<: *rule_providers_domain
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/steam.mrs'
     path: './ruleset/steam.mrs'
     path-in-bundle: 'geo/geosite/steam.mrs'
+  tiktok:
+    <<: *rule_providers_domain
+    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs'
+    path: './ruleset/tiktok.mrs'
+    path-in-bundle: 'geo/geosite/tiktok.mrs'
   twitter:
     <<: *rule_providers_domain
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/twitter.mrs'
@@ -336,21 +331,6 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/spotify.mrs'
     path: './ruleset/spotify.mrs'
     path-in-bundle: 'geo/geosite/spotify.mrs'
-  cloudflare:
-    <<: *rule_providers_domain
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cloudflare.mrs'
-    path: './ruleset/cloudflare.mrs'
-    path-in-bundle: 'geo/geosite/cloudflare.mrs'
-  cloudflare_cn:
-    <<: *rule_providers_domain
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cloudflare@cn.mrs'
-    path: './ruleset/cloudflare@cn.mrs'
-    path-in-bundle: 'geo/geosite/cloudflare@cn.mrs'
-  cloudflare_ip:
-    <<: *rule_providers_ip
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cloudflare.mrs'
-    path: './ruleset/cloudflare_ip.mrs'
-    path-in-bundle: 'geo/geoip/cloudflare.mrs'
   apple:
     <<: *rule_providers_domain
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple.mrs'
@@ -530,17 +510,14 @@ proxy-groups:
     <<: [*group_common_select, *proxies_default]
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png'
 
-  - name: 'Cloudflare'
-    <<: [*group_common_select, *proxies_default]
-    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png'
-
-  - name: 'Pixiv'
-    <<: [*group_common_select, *proxies_default]
-    icon: 'https://play-lh.googleusercontent.com/Ls9opXo6-wfEWmbBU8heJaFS8HwWydssWE1J3vexIGvkF-UJDqcW7ZMD8w6dQABfygONd4z3Yt4TfRDZAPYq=w480-h960-rw'
-
   - name: 'Steam'
     <<: [*group_common_select, *proxies_direct]
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Steam.png'
+
+  - name: 'TikTok'
+    default-selected: '日本'
+    <<: [*group_common_select, *proxies_default]
+    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png'
 
   - name: 'Twitter'
     <<: [*group_common_select, *proxies_default]
@@ -664,15 +641,10 @@ rules:
   - RULE-SET,games_cn,直连 # 已包含 steam 下载域名
   - RULE-SET,epicgames,直连
   - RULE-SET,nvidia_cn,直连
-  - RULE-SET,cloudflare_cn,直连
   - RULE-SET,apple_cn,直连
   - RULE-SET,microsoft_cn,直连
   - DOMAIN,fsend.cn,直连
   - DOMAIN,international-gfe.download.nvidia.com,直连
-
-  # 进程规则
-  - PROCESS-NAME,com.perol.pixez,Pixiv
-  - PROCESS-NAME,com.perol.play.pixez,Pixiv
 
   # 广告拦截
   - RULE-SET,adblockmihomolite,AdBlock
@@ -680,7 +652,6 @@ rules:
   # 代理规则（域名）
   - RULE-SET,ai,AI
   - RULE-SET,youtube,Media
-  - RULE-SET,tiktok,Media
   - RULE-SET,instagram,Media
   - RULE-SET,netflix,Media
   - RULE-SET,hbo,Media
@@ -695,9 +666,8 @@ rules:
   - RULE-SET,microsoft,Microsoft
   - RULE-SET,apple,Apple
   - RULE-SET,telegram,Telegram
-  - RULE-SET,cloudflare,Cloudflare
-  - RULE-SET,pixiv,Pixiv
   - RULE-SET,steam,Steam
+  - RULE-SET,tiktok,TikTok
   - RULE-SET,twitter,Twitter
   - RULE-SET,emby,Emby
   - DOMAIN-SUFFIX,mb3admin.com,Emby
@@ -708,7 +678,6 @@ rules:
   - RULE-SET,google_ip,Google,no-resolve
   - RULE-SET,telegram_ip,Telegram,no-resolve
   - RULE-SET,twitter_ip,Twitter,no-resolve
-  - RULE-SET,cloudflare_ip,Cloudflare,no-resolve
   - RULE-SET,netflix_ip,Media,no-resolve
 
   # 兜底规则
