@@ -275,6 +275,62 @@ function createRegionGroup(name, icon, proxies) {
   ];
 }
 
+// 判断域名规则是否匹配节点域名
+function matchDomainPattern(pattern, domains) {
+  pattern = pattern.toLowerCase();
+
+  // 精确匹配
+  if (!pattern.includes('*') && !pattern.startsWith('+.') && !pattern.startsWith('.')) {
+    return domains.has(pattern);
+  }
+
+  // +.example.com
+  if (pattern.startsWith('+.')) {
+    const suffix = pattern.slice(2);
+    for (const domain of domains) {
+      if (domain === suffix || domain.endsWith(`.${suffix}`)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // .example.com
+  if (pattern.startsWith('.')) {
+    const suffix = pattern.slice(1);
+    for (const domain of domains) {
+      if (domain !== suffix && domain.endsWith(`.${suffix}`)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // *.example.com、example.*.com 等
+  const patternParts = pattern.split('.');
+  for (const domain of domains) {
+    const domainParts = domain.split('.');
+
+    // 标签数量必须一致
+    if (patternParts.length !== domainParts.length) {
+      continue;
+    }
+    let matched = true;
+    for (let i = 0; i < patternParts.length; i++) {
+      if (patternParts[i] !== '*' && patternParts[i] !== domainParts[i]) {
+        matched = false;
+        break;
+      }
+    }
+
+    if (matched) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // --- 主入口 ---
 
 function main(config) {
@@ -437,7 +493,7 @@ function main(config) {
     originalDnsConfig['proxy-server-nameserver-policy'] || {},
   ]) {
     for (const [domain, dns] of Object.entries(policy)) {
-      if (proxyDomains.has(domain.toLowerCase())) {
+      if (matchDomainPattern(domain, proxyDomains)) {
         originalPolicyNameserver[domain] = dns;
       }
     }
@@ -474,9 +530,9 @@ function main(config) {
   const originalHosts = config.hosts || {};
   const proxyHosts = {};
 
-  for (const [host, value] of Object.entries(originalHosts)) {
-    if (proxyDomains.has(host.toLowerCase())) {
-      proxyHosts[host] = value;
+  for (const [domain, value] of Object.entries(originalHosts)) {
+    if (matchDomainPattern(domain, proxyDomains)) {
+      proxyHosts[domain] = value;
     }
   }
 
