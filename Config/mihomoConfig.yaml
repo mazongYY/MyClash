@@ -167,11 +167,6 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/geolocation-cn.mrs'
     path: './ruleset/geolocation-cn.mrs'
     path-in-bundle: 'geo/geosite/geolocation-cn.mrs'
-  cn_additional:
-    <<: *rule_providers_domain
-    url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs'
-    path: './ruleset/cn-additional-list.mrs'
-    path-in-bundle: 'geo/geosite/cn.mrs'
   cn_ip:
     <<: *rule_providers_ip
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cn.mrs'
@@ -333,6 +328,11 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/wwqgtxx/clash-rules@release/fakeip-filter.mrs'
     path: './ruleset/fakeip-filter.mrs'
     path-in-bundle: 'geo/geosite/private.mrs'
+  cn_additional:
+    <<: *rule_providers_domain
+    url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs'
+    path: './ruleset/cn-additional-list.mrs'
+    path-in-bundle: 'geo/geosite/cn.mrs'
   cn:
     <<: *rule_providers_domain
     url: 'https://fastly.jsdelivr.net/gh/wwqgtxx/clash-rules@release/direct.mrs'
@@ -623,9 +623,6 @@ proxy-groups:
 # --- 路由规则 (Rules) ---
 
 rules:
-  # 禁用国外 QUIC 流量
-  - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,cn_additional),(RULE-SET,cn_ip,no-resolve)))))),REJECT
-
   # 私有网络直连
   - RULE-SET,private,直连
   - RULE-SET,private_ip,直连,no-resolve
@@ -639,6 +636,9 @@ rules:
   - DOMAIN,fsend.cn,直连
   - DOMAIN,international-gfe.download.nvidia.com,直连
   - DOMAIN-SUFFIX,hdslb.com,直连
+
+  # 禁用国外 QUIC 流量
+  - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,cn_additional),(RULE-SET,cn_ip,no-resolve)))))),REJECT
 
   # 广告拦截
   - RULE-SET,adblockmihomolite,AdBlock

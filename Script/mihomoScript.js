@@ -45,9 +45,6 @@ const excludeFilter =
 
 // 预定义 rules
 const rules = [
-  // 禁用国外 QUIC 流量
-  'AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,cn_additional),(RULE-SET,cn_ip,no-resolve)))))),REJECT',
-
   // 私有网络直连
   'RULE-SET,private,直连',
   'RULE-SET,private_ip,直连,no-resolve',
@@ -61,6 +58,11 @@ const rules = [
   'DOMAIN,fsend.cn,直连',
   'DOMAIN,international-gfe.download.nvidia.com,直连',
   'DOMAIN-SUFFIX,hdslb.com,直连',
+
+  // 禁用国外 QUIC 流量
+  'AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,cn_additional),(RULE-SET,cn_ip,no-resolve)))))),REJECT',
+
+  'RULE-SET,github,默认代理',
 ];
 
 // 定义地区策略组
@@ -169,12 +171,6 @@ const baseRuleProviders = {
     path: './ruleset/geolocation-cn.mrs',
     'path-in-bundle': 'geo/geosite/geolocation-cn.mrs',
   },
-  cn_additional: {
-    ...ruleProviderCommonDomain,
-    url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs',
-    path: './ruleset/cn-additional-list.mrs',
-    'path-in-bundle': 'geo/geosite/cn.mrs',
-  },
   cn_ip: {
     ...ruleProviderCommonIpcidr,
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cn.mrs',
@@ -204,6 +200,12 @@ const baseRuleProviders = {
     url: 'https://fastly.jsdelivr.net/gh/wwqgtxx/clash-rules@release/fakeip-filter.mrs',
     path: './ruleset/fakeip-filter.mrs',
     'path-in-bundle': 'geo/geosite/private.mrs',
+  },
+  cn_additional: {
+    ...ruleProviderCommonDomain,
+    url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs',
+    path: './ruleset/cn-additional-list.mrs',
+    'path-in-bundle': 'geo/geosite/cn.mrs',
   },
   cn: {
     ...ruleProviderCommonDomain,
@@ -687,6 +689,9 @@ function main(config) {
   const finalRules = [...rules];
   const finalRuleProviders = { ...baseRuleProviders };
 
+  // 获取所有节点名称
+  const allProxiesNames = filteredProxies.map((p) => p.name);
+
   // 筛选类型为 select 的地区策略组
   const groupNamesOfSelect = generatedRegionGroups.filter((g) => g.type === 'select').map((g) => g.name);
 
@@ -701,29 +706,38 @@ function main(config) {
     {
       ...selectBaseOption,
       name: '手动选择',
-      'include-all': true,
-      'exclude-type': 'DIRECT',
+      proxies: [...allProxiesNames],
       icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Static.png',
     },
     {
       ...urlTestBaseOption,
       name: '自动选择',
-      'include-all': true,
+      proxies: [...allProxiesNames],
     },
     {
       ...loadBalanceBaseOption,
       name: '负载均衡',
-      'include-all': true,
+      proxies: [...allProxiesNames],
     },
   );
 
   // 构建分流策略组
+
+  // 优先添加 AdBlock 规则
+  const adBlockConfig = serviceConfigs.find((svc) => svc.name === 'AdBlock');
+  if (adBlockConfig && ruleOptionsEnable[adBlockConfig.name]) {
+    finalRules.push(...adBlockConfig.rules);
+    Object.assign(finalRuleProviders, adBlockConfig.providers);
+  }
+
   for (const svc of serviceConfigs) {
     if (!ruleOptionsEnable[svc.name]) continue;
 
     // 添加分流策略组对应的 Rule 和 Rule Providers
-    finalRules.push(...svc.rules);
-    Object.assign(finalRuleProviders, svc.providers || {});
+    if (svc.name !== adBlockConfig?.name) {
+      finalRules.push(...svc.rules);
+      Object.assign(finalRuleProviders, svc.providers);
+    }
 
     // 添加分流策略组对应的节点列表
     const groupProxies = svc.reject
@@ -976,8 +990,6 @@ function main(config) {
   newConfig['rule-providers'] = finalRuleProviders;
 
   newConfig['rules'] = [
-    'RULE-SET,github,默认代理',
-
     ...finalRules,
 
     // 兜底规则
